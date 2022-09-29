@@ -2,7 +2,7 @@ import argparse
 import time
 
 from common import get_ratings
-from sgd import sgd_bias, pred_bias
+from sgd import sgd, pred
 
 
 def main(parsed_args):
@@ -10,11 +10,9 @@ def main(parsed_args):
     ratings_path = parsed_args.ratings_path
     targets_path = parsed_args.targets_path
 
-    ratings, mean = get_ratings(ratings_path)
-    # user_f, item_f = sgd(ratings)
-    # pred(targets_path, user_f, item_f)
-    user_f, item_f, user_b, item_b = sgd_bias(ratings, mean, start)
-    pred_bias(targets_path, mean,  user_f, item_f, user_b, item_b)
+    ratings, item_by_user, mean = get_ratings(ratings_path)
+    user_f, item_f, user_b, item_b, yj = sgd(ratings, item_by_user, mean, start)
+    pred(targets_path, item_by_user, mean, user_f, item_f, user_b, item_b, yj)
 
 
 if __name__ == '__main__':

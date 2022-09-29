@@ -2,23 +2,25 @@ import numpy as np
 import math
 
 
-def get_ratings(ratings_path, centered=False):
+def get_ratings(ratings_path):
     acc = 0
     ratings_dict = {}
+    item_by_user = {}
     with open(ratings_path, 'r') as stream:
         next(stream)
         while line := stream.readline().strip():
-            key, val = line.split(',')
-            ratings_dict[key] = float(val)
-            acc += float(val)
+            ui, r = line.split(',')
+            u, i = ui.split(':')
+            if u in item_by_user:
+                item_by_user[u].add(i)
+            else:
+                item_by_user[u] = {i}
+
+            ratings_dict[ui] = float(r)
+            acc += float(r)
 
     mean = acc / len(ratings_dict)
-
-    if centered:
-        for k, r in ratings_dict.items():
-            ratings_dict[k] = r - mean
-
-    return ratings_dict, mean
+    return ratings_dict, item_by_user, mean
 
 
 def get_factors(ratings_dict, k):
@@ -26,11 +28,13 @@ def get_factors(ratings_dict, k):
     item_factor = {}
     user_bias = {}
     item_bias = {}
+    yj = {}
     for ids in ratings_dict.keys():
         user, item = ids.split(':')
         user_factor[user] = np.random.uniform(-0.01, 0.01, k)
         item_factor[item] = np.random.uniform(-0.01, 0.01, k)
-        user_bias[user] = np.random.uniform(-0.01, 0.01)
-        item_bias[item] = np.random.uniform(-0.01, 0.01)
+        yj[item] = np.random.uniform(-0.01, 0.01, k)
+        user_bias[user] = 0.0
+        item_bias[item] = 0.0
 
-    return user_factor, item_factor, user_bias, item_bias
+    return user_factor, item_factor, user_bias, item_bias, yj
