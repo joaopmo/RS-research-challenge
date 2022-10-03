@@ -1,7 +1,10 @@
 import numpy as np
 import math
 
-
+# Função que lê o arquivo "ratings.csv" e retorna:
+# rantings_dict: estrutura de dados que armazena todos os ratings
+# item_by_user: estrutura de dados que armazena os items avaliados por cada usuário
+# mean: média de todas as avaliações
 def get_ratings(ratings_path):
     acc = 0
     ratings_dict = {}
@@ -38,3 +41,24 @@ def get_factors(ratings_dict, k):
         item_bias[item] = 0.0
 
     return user_factor, item_factor, user_bias, item_bias, yj
+
+def pred(targets_path, Ru, mean, user_f, item_f, user_b, item_b, yj):
+    target_dict = {}
+    with open(targets_path, 'r') as stream:
+        next(stream)
+        while line := stream.readline().strip():
+            u, i = line.split(':')
+            p, q = user_f[u], item_f[i]
+            sqrt_Ru = math.sqrt(len(Ru[u]))
+            implicit_fb = np.sum([yj[j] for j in Ru[u]], axis=0) / sqrt_Ru
+            dot = np.dot(q, p + implicit_fb)
+            r = mean + user_b[u] + item_b[i] + dot
+            r = round(r)
+            target_dict[line] = 1 if r < 1 else 5 if r > 5 else r
+
+    with open("output.csv", "w") as stream:
+        print("UserId:ItemId,Rating")
+        stream.write("UserId:ItemId,Rating\n")
+        for key, val in target_dict.items():
+            print(f"{key},{val}")
+            stream.write(f"{key},{val}\n")

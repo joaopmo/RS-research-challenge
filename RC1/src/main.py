@@ -1,8 +1,8 @@
 import argparse
 import time
 
-from common import get_ratings
-from sgd import sgd, pred
+from common import get_ratings, pred
+from sgd import sgd
 
 
 def main(parsed_args):
