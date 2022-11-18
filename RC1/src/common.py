@@ -1,9 +1,10 @@
 import numpy as np
 import math
 
+
 # Função que lê o arquivo "ratings.csv" e retorna:
 # rantings_dict: estrutura de dados que armazena todos os ratings
-# item_by_user: estrutura de dados que armazena os items avaliados por cada usuário
+# item_by_user: estrutura que armazena os items avaliados por cada usuário
 # mean: média de todas as avaliações
 def get_ratings(ratings_path):
     acc = 0
@@ -26,6 +27,9 @@ def get_ratings(ratings_path):
     return ratings_dict, item_by_user, mean
 
 
+# Função que inicializa as estruturas de dados que representam
+# matrizes esparças de fatores ou estruturas que armazenam bias
+# de usuários e items
 def get_factors(ratings_dict, k):
     user_factor = {}
     item_factor = {}
@@ -42,6 +46,10 @@ def get_factors(ratings_dict, k):
 
     return user_factor, item_factor, user_bias, item_bias, yj
 
+
+# Função que lê o arquivo "target.csv", calcula
+# a predição para os pares UserId:ItemId deste arquivo
+# e gera um novo arquivo "output.csv" com as predições
 def pred(targets_path, Ru, mean, user_f, item_f, user_b, item_b, yj):
     target_dict = {}
     with open(targets_path, 'r') as stream:

@@ -31,7 +31,6 @@ def sgd(s, Ru, mean, start, k=20, alpha=0.009, reg_f=0.015, reg_b=0.005):
                 yj[j] += alpha * (err_q_sqrt - reg_f * yj[j])
             user_f[u], item_f[i] = p_new, q_new
         alpha *= 0.95
-        print('-')
 
     return user_f, item_f, user_b, item_b, yj
 
